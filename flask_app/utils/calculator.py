@@ -1,5 +1,4 @@
-from config import Config
-
+from ..config import Config
 
 class Calculator:
     """Калькулятор стоимости и сроков разработки сайта"""
