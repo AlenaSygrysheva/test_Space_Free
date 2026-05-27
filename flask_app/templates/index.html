@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор стоимости сайта</title>
+    <style>
+        .header {
+            background: white;
+            padding: 48px 56px 32px 56px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .form-content {
+            padding: 40px 56px 56px 56px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .field {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 20px;
+            font-weight: 800;
+            color: #2c3e50;
+            font-size: 18px;
+            text-align: left;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1.5px solid #dee2e6;
+            border-radius: 14px;
+            font-size: 16px;
+            background: white;
+            font-family: inherit;
+            text-align: left;
+        }
+
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+            align-items: stretch;
+        }
+
+        .features label {
+            width: 100%;
+            justify-content: flex-start;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            padding: 12px 18px;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .features input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+
+        .urgency {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .urgency label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: #f8f9fa;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-bottom: 0;
+            color: #2c3e50;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        .urgency input[type="radio"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #357abd;
+        }
+
+        .result {
+            margin-top: 48px;
+            padding: 40px 48px;
+            background: #e6f3ff;
+            border-radius: 20px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .total-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4a90e2;
+            text-align: center;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .price {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .deadline {
+            font-size: 26px;
+            font-weight: 600;
+            margin: 20px 0 24px 0;
+            text-align: center;
+            color: #333333;
+        }
+
+        .divider {
+            margin: 28px 0;
+            border: none;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .explanation {
+            background: #ffffff;
+            padding: 28px 32px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.9;
+            color: #1a1a1a;
+        }
+
+        .explanation strong {
+            color: #4a90e2;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="calculator">
+        <div class="header">
+            <h2>Калькулятор стоимости сайта</h2>
+            <p>Рассчитайте примерную стоимость и сроки разработки</p>
+        </div>
+
+        <!-- ВАЖНО: action="/" и method="POST" -->
+        <form method="POST" action="/">
+            <div class="form-content">
+                <div class="field">
+                    <label>🌐 Тип сайта</label>
+                    <select name="type" required>
+                        <option value="landing">Лендинг</option>
+                        <option value="corporate">Корпоративный сайт</option>
+                        <option value="shop">Интернет-магазин</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>📄 Количество страниц</label>
+                    <input type="number" name="pages" value="1" min="1" max="100">
+                </div>
+
+                <div class="field">
+                    <label>⚙️ Дополнительные функции</label>
+                    <div class="features">
+                        <label><input type="checkbox" name="features" value="form"> 📝 Форма заявки</label>
+                        <label><input type="checkbox" name="features" value="catalog"> 📚 Каталог</label>
+                        <label><input type="checkbox" name="features" value="payment"> 💳 Онлайн-оплата</label>
+                        <label><input type="checkbox" name="features" value="crm"> 🔄 Интеграция с CRM</label>
+                        <label><input type="checkbox" name="features" value="multilang"> 🌍 Мультиязычность</label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>⏱️ Срочность</label>
+                    <div class="urgency">
+                        <label><input type="radio" name="urgency" value="normal" checked> 🐢 Обычная</label>
+                        <label><input type="radio" name="urgency" value="urgent"> ⚡ Срочно (+30%)</label>
+                        <label><input type="radio" name="urgency" value="very"> 🚀 Очень срочно (+60%)</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">📊 РАССЧИТАТЬ</button>
+
+                {% if result %}
+                <div class="result">
+                    <div class="total-label">📊 ИТОГО</div>
+                    <div class="price">{{ result.price }} ₽</div>
+                    <div class="deadline">⏱️ Срок: {{ result.deadline }} дней</div>
+                    <hr class="divider">
+                    <div class="explanation">{{ result.explanation | safe }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
