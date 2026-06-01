@@ -169,50 +169,56 @@
             color: #4a90e2;
             font-weight: 700;
         }
+
+        /* Стиль для скрытого поля */
+        .hidden-field {
+            display: none;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="calculator">
         <div class="header">
-            <h2>Калькулятор стоимости сайта</h2>
+            <h2> Калькулятор стоимости сайта</h2>
             <p>Рассчитайте примерную стоимость и сроки разработки</p>
         </div>
 
-        <!-- ВАЖНО: action="/" и method="POST" -->
         <form method="POST" action="/">
             <div class="form-content">
                 <div class="field">
                     <label>🌐 Тип сайта</label>
-                    <select name="type" required>
-                        <option value="landing">Лендинг</option>
-                        <option value="corporate">Корпоративный сайт</option>
-                        <option value="shop">Интернет-магазин</option>
+                    <select name="type" id="type" required>
+                        <option value="landing" {% if form_data and form_data.type == 'landing' %}selected{% endif %}>Лендинг (одностраничный)</option>
+                        <option value="corporate" {% if form_data and form_data.type == 'corporate' %}selected{% endif %}>Корпоративный сайт</option>
+                        <option value="shop" {% if form_data and form_data.type == 'shop' %}selected{% endif %}>Интернет-магазин</option>
                     </select>
                 </div>
 
-                <div class="field">
+                <!-- Поле "Количество страниц" с id для управления видимостью -->
+                <div class="field" id="pagesField">
                     <label>📄 Количество страниц</label>
-                    <input type="number" name="pages" value="1" min="1" max="100">
+                    <input type="number" name="pages" id="pages" value="{{ form_data.pages if form_data else '1' }}" min="1" max="100">
+                    <div class="error" id="pagesError" style="display:none; color: #dc3545; font-size: 13px; margin-top: 8px;"></div>
                 </div>
 
                 <div class="field">
                     <label>⚙️ Дополнительные функции</label>
                     <div class="features">
-                        <label><input type="checkbox" name="features" value="form"> 📝 Форма заявки</label>
-                        <label><input type="checkbox" name="features" value="catalog"> 📚 Каталог</label>
-                        <label><input type="checkbox" name="features" value="payment"> 💳 Онлайн-оплата</label>
-                        <label><input type="checkbox" name="features" value="crm"> 🔄 Интеграция с CRM</label>
-                        <label><input type="checkbox" name="features" value="multilang"> 🌍 Мультиязычность</label>
+                        <label><input type="checkbox" name="features" value="form" {% if form_data and 'form' in form_data.features %}checked{% endif %}> 📝 Форма заявки</label>
+                        <label><input type="checkbox" name="features" value="catalog" {% if form_data and 'catalog' in form_data.features %}checked{% endif %}> 📚 Каталог</label>
+                        <label><input type="checkbox" name="features" value="payment" {% if form_data and 'payment' in form_data.features %}checked{% endif %}> 💳 Онлайн-оплата</label>
+                        <label><input type="checkbox" name="features" value="crm" {% if form_data and 'crm' in form_data.features %}checked{% endif %}> 🔄 Интеграция с CRM</label>
+                        <label><input type="checkbox" name="features" value="multilang" {% if form_data and 'multilang' in form_data.features %}checked{% endif %}> 🌍 Мультиязычность</label>
                     </div>
                 </div>
 
                 <div class="field">
                     <label>⏱️ Срочность</label>
                     <div class="urgency">
-                        <label><input type="radio" name="urgency" value="normal" checked> 🐢 Обычная</label>
-                        <label><input type="radio" name="urgency" value="urgent"> ⚡ Срочно (+30%)</label>
-                        <label><input type="radio" name="urgency" value="very"> 🚀 Очень срочно (+60%)</label>
+                        <label><input type="radio" name="urgency" value="normal" {% if not form_data or form_data.urgency == 'normal' %}checked{% endif %}> 🐢 Обычная</label>
+                        <label><input type="radio" name="urgency" value="urgent" {% if form_data and form_data.urgency == 'urgent' %}checked{% endif %}> ⚡ Срочно (+30%)</label>
+                        <label><input type="radio" name="urgency" value="very" {% if form_data and form_data.urgency == 'very' %}checked{% endif %}> 🚀 Очень срочно (+60%)</label>
                     </div>
                 </div>
 
@@ -231,5 +237,83 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Функция для показа/скрытия поля "Количество страниц"
+    function togglePagesField() {
+        const typeSelect = document.getElementById('type');
+        const pagesField = document.getElementById('pagesField');
+
+        if (!typeSelect || !pagesField) return;
+
+        const selectedType = typeSelect.value;
+
+        if (selectedType === 'landing') {
+            // Если выбран лендинг - скрываем поле
+            pagesField.classList.add('hidden-field');
+            // Сбрасываем значение количества страниц до 1
+            const pagesInput = document.getElementById('pages');
+            if (pagesInput) pagesInput.value = 1;
+        } else {
+            // Если выбран не лендинг - показываем поле
+            pagesField.classList.remove('hidden-field');
+        }
+    }
+
+    // Валидация количества страниц на клиенте
+    function validatePages() {
+        const typeSelect = document.getElementById('type');
+        const pagesInput = document.getElementById('pages');
+        const pagesError = document.getElementById('pagesError');
+
+        if (!pagesInput || !pagesError) return;
+
+        // Если лендинг - не валидируем
+        if (typeSelect && typeSelect.value === 'landing') {
+            pagesError.style.display = 'none';
+            return true;
+        }
+
+        let pages = parseInt(pagesInput.value, 10);
+        const minPages = 1;
+        const maxPages = 100;
+
+        if (isNaN(pages) || pages < minPages) {
+            pagesInput.value = minPages;
+            pagesError.textContent = 'Минимум 1 страница';
+            pagesError.style.display = 'block';
+            return false;
+        } else if (pages > maxPages) {
+            pagesInput.value = maxPages;
+            pagesError.textContent = 'Максимум 100 страниц';
+            pagesError.style.display = 'block';
+            return false;
+        } else {
+            pagesError.style.display = 'none';
+            return true;
+        }
+    }
+
+    // Навешиваем обработчики после загрузки страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeSelect = document.getElementById('type');
+        const pagesInput = document.getElementById('pages');
+
+        if (typeSelect) {
+            typeSelect.addEventListener('change', function() {
+                togglePagesField();
+                validatePages();
+            });
+        }
+
+        if (pagesInput) {
+            pagesInput.addEventListener('input', validatePages);
+        }
+
+        // Вызываем при загрузке для начальной настройки
+        togglePagesField();
+        validatePages();
+    });
+</script>
 </body>
 </html>
